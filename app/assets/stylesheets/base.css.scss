@@ -11,9 +11,11 @@ $black: #282828;
 $blush: #fbcfc6;
 $gold: #d8ae64;
 $green: #074232;
-$gray: #7a7c7c;
+$gray: #2d2e2e;
 $paleblue: #e4e9e5;
 $navy: #2a4758;
+$white: #ffffff;
+$linkcolor: #00838C;
 
 $mobile: new-breakpoint(max-width 420px 4);
 
@@ -32,4 +34,12 @@ hr {
   border-bottom: 2px solid $pink;
   background: transparent;
   height: 6px;
+}
+
+.clearfix {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
 }

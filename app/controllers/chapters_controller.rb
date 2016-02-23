@@ -1,7 +1,7 @@
 class ChaptersController < ApplicationController
   require 'rails_autolink'
   def index
-    @chapters = Chapter.all
+    @chapters = Chapter.active.order("chapter ASC")
     states = {}
     @chapters.each do |l|
       if states[l.state]
@@ -20,16 +20,21 @@ end
 
   def show
     @chapter = Chapter.friendly.find(params[:id])
+    #Make sure the chapter is active otherwise redirect to index
+    if !@chapter.is_active
+      redirect_to({ action: 'index' }, alert: @chapter.chapter + " is no longer an active chapter.")
+    end
     if request.path != chapter_path(@chapter)
       redirect_to @chapter, status: :moved_permanently
     end
     @users = @chapter.admin_users
-    @sponsors = @chapter.sponsors
+    @sponsors = @chapter.sponsors.order("sort_order ASC")
 
     @bios = @chapter.bios
-    @leaders = @bios.where(title: "LEADERS")
-    @instructors = @bios.where(title: "INSTRUCTORS")
-    @volunteers = @bios.where(title: "VOLUNTEERS")
+    @leaders = @bios.where(title: "LEADERS").order("sort_order ASC")
+    @coordinators = @bios.where(title: "COORDINATORS").order("sort_order ASC")
+    @instructors = @bios.where(title: "INSTRUCTORS").order("sort_order ASC")
+    @volunteers = @bios.where(title: "VOLUNTEERS").order("sort_order ASC")
 
     api = MeetupApi.new
     @events = api.events(group_id: @chapter.meetup_id)

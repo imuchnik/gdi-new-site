@@ -7,14 +7,24 @@ Rails.application.routes.draw do
   root to: "home#index"
 
   # Example of regular route:
-  resources :chapters, only: [:index, :show]
+  resources :chapters, :materials, only: [:index, :show]
   match '/meetups/:slug' => 'meetups#show', via: :get
 
-  # resource :meetups, only: [:show]
+  get '/materials/:slug' => 'materials#show', as: :course
 
   get 'about', to: 'home#about'
   get 'code-of-conduct', to: 'home#code-of-conduct'
-  
+  get 'codeofconduct', to: redirect('code-of-conduct')
+  get 'faq', to: 'home#faq'
+  get 'jobs', to: 'home#jobs'
+  get 'materials', to: 'materials#index'
+  get 'curriculum', to: redirect('materials')
+  get 'supporters', to: 'home#supporters'
+  get 'sponsors', to: redirect('supporters')
+  # Donation page
+  get 'donate', to:'home#donate'
+  # Errors (must be last rule)
+  get "*any", via: :all, to: "errors#not_found"
   # Example of named route that can be invoked with purchase_url(id: product.id)
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
 

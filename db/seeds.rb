@@ -1,11 +1,6 @@
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
 
-julia = AdminUser.create! do |a|
-            a.email       = 'julia@girldevelopit.com'
-            a.password    = a.password_confirmation = 'password'
-          end
-
 admin = Role.create! do |a|
                 a.name = 'admin'
                 a.resource_id = 1
@@ -16,11 +11,13 @@ leader = Role.create! do |a|
                 a.resource_id = 2
               end
 
+#give role privileges to default admin user created by Devise
 adminfirst = AdminUser.first
 adminfirst.roles << admin
-adminfirst.roles << leader
+#only need admin role for all-access
+#adminfirst.roles << leader
 
-chapter_seed = Rails.root.join('db', 'seeds', 'locs2.yml')
+chapter_seed = Rails.root.join('db', 'seeds', 'sample-locs.yml')
 
 #board_seed = Rails.root.join('db', 'seeds', 'board.yml')
 locs = YAML::load_file(chapter_seed)
@@ -30,7 +27,7 @@ locs.each do |l|
   newloc = Chapter.create!(chapter: l["name"], fb: l["facebook"], meetup: l["meetup_url"],
                   twitter: l["twitter"], linkedin: l["linkedin"], github: l["github"],
                   latitude: l["latitude"], longitude: l["longitude"], state: l["state"],
-                  #geo: l["name"],
+                  geo: l["name"]+", "+l["state"]+", USA",
                   meetup_id: l["meetup_id"], email: l["email"])
   l["leaders"].each do |leader|
     ldr = Bio.new(title: "LEADERS", name: leader["name"], info: leader["bio"],
@@ -56,7 +53,7 @@ locs.each do |l|
     inst.save
   end
   l["sponsors"].each do |sponsor|
-    Sponsor.create!(name: sponsor["website"], url: sponsor["website"], chapter_id: newloc.id,
+    Sponsor.create!(name: sponsor["name"], url: sponsor["website"], chapter_id: newloc.id,
     image: File.open(File.join(Rails.root, "app/assets/images/#{sponsor["logo"]}"))
     )
   end
